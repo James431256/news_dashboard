@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News Intelligence Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome for clean icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fa-solid fa-bolt-lightning text-primary"></i>
+                <span class="logo-text">Pulse<span class="text-primary">News</span> <span class="badge-intel">Intelligence</span></span>
+            </div>
+            <nav class="nav-tabs">
+                <button id="tab-feed" class="tab-btn active" onclick="switchView('feed')">
+                    <i class="fa-solid fa-newspaper"></i> Live Feed
+                </button>
+                <button id="tab-bookmarks" class="tab-btn" onclick="switchView('bookmarks')">
+                    <i class="fa-solid fa-bookmark"></i> Saved Articles (<span id="bookmark-count">0</span>)
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="container">
+
+        <!-- Search & Control Panel -->
+        <section class="search-panel">
+            <form id="search-form" onsubmit="handleSearch(event)">
+                <div class="search-bar-row">
+                    <div class="input-group search-input-group">
+                        <i class="fa-solid fa-magnifying-glass input-icon"></i>
+                        <input type="text" id="query-input" placeholder="Search topics, companies (e.g. AI, Apple, Economy, Climate)..." required>
+                    </div>
+
+                    <div class="input-group select-group">
+                        <i class="fa-solid fa-folder input-icon"></i>
+                        <select id="category-select">
+                            <option value="all">All Categories</option>
+                            <option value="technology">Technology</option>
+                            <option value="business">Business & Finance</option>
+                            <option value="science">Science</option>
+                            <option value="politics">Politics</option>
+                            <option value="general">General News</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="search-btn">
+                        <i class="fa-solid fa-search"></i> Search News
+                    </button>
+                </div>
+            </form>
+
+            <!-- Recent Searches Pill Bar -->
+            <div class="recent-searches" id="recent-searches-container">
+                <span class="recent-label"><i class="fa-solid fa-clock-rotate-left"></i> Recent:</span>
+                <div id="recent-pills" class="pills-wrapper">
+                    <!-- Dynamic search tags -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Executive Intelligence Overview (Sentiment breakdown) -->
+        <section id="intel-overview" class="intel-overview" style="display: none;">
+            <div class="overview-header">
+                <h3><i class="fa-solid fa-chart-pie"></i> Intelligence Sentiment Overview</h3>
+                <span class="results-meta" id="results-meta">Found 0 articles across providers</span>
+            </div>
+            <div class="stat-cards">
+                <div class="stat-card positive" onclick="filterBySentiment('POSITIVE')">
+                    <div class="stat-icon"><i class="fa-solid fa-arrow-trend-up"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Positive Sentiment</span>
+                        <h4 id="stat-positive">0</h4>
+                    </div>
+                </div>
+                <div class="stat-card neutral" onclick="filterBySentiment('NEUTRAL')">
+                    <div class="stat-icon"><i class="fa-solid fa-minus"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Neutral Tone</span>
+                        <h4 id="stat-neutral">0</h4>
+                    </div>
+                </div>
+                <div class="stat-card negative" onclick="filterBySentiment('NEGATIVE')">
+                    <div class="stat-icon"><i class="fa-solid fa-arrow-trend-down"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Negative Sentiment</span>
+                        <h4 id="stat-negative">0</h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- In-Page Filtering Bar -->
+            <div class="filter-bar">
+                <span class="filter-label"><i class="fa-solid fa-filter"></i> Filter view:</span>
+                <div class="filter-buttons">
+                    <button class="filter-pill active" onclick="filterBySentiment('ALL')">All Sentiments</button>
+                    <button class="filter-pill" onclick="filterBySentiment('POSITIVE')">Positive Only</button>
+                    <button class="filter-pill" onclick="filterBySentiment('NEUTRAL')">Neutral Only</button>
+                    <button class="filter-pill" onclick="filterBySentiment('NEGATIVE')">Negative Only</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Loading State -->
+        <div id="loading-state" class="state-container" style="display: none;">
+            <div class="spinner"></div>
+            <p>Aggregating intelligence from The Guardian & News networks...</p>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="state-container error-card" style="display: none;">
+            <i class="fa-solid fa-triangle-exclamation state-icon"></i>
+            <h4 id="error-title">Search Error</h4>
+            <p id="error-message">Something went wrong while retrieving articles.</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="state-container" style="display: none;">
+            <i class="fa-regular fa-newspaper state-icon"></i>
+            <h4>No Articles Found</h4>
+            <p>Try searching for broader keywords like "Technology", "NVIDIA", "Energy", or select "All Categories".</p>
+        </div>
+
+        <!-- Articles Grid -->
+        <section id="articles-container" class="articles-grid">
+            <!-- Dynamically populated article cards -->
+        </section>
+
+        <!-- Bookmarks View (Initially hidden) -->
+        <section id="bookmarks-view" class="articles-grid" style="display: none;">
+            <!-- Dynamically populated saved cards -->
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>News Intelligence Dashboard &bull; Spring Boot 3 &bull; Multi-Provider News Aggregation</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
