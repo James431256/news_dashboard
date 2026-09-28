@@ -30,7 +30,7 @@ public class GuardianNewsClient implements NewsClient {
 
     public GuardianNewsClient(RestTemplate restTemplate,
                               ObjectMapper objectMapper,
-                              @Value("${guardian.api.key:test}") String apiKey) {
+                              @Value("${guardian.api.key:}") String apiKey) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
         this.apiKey = apiKey;
@@ -44,6 +44,10 @@ public class GuardianNewsClient implements NewsClient {
     @Override
     public List<Article> searchArticles(String query, String category) {
         List<Article> articles = new ArrayList<>();
+        if (apiKey == null || apiKey.isBlank()) {
+            logger.warn("Guardian API key is not configured. Skipping The Guardian.");
+            return articles;
+        }
 
         try {
             UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(BASE_URL)
@@ -91,7 +95,7 @@ public class GuardianNewsClient implements NewsClient {
                             webUrl,
                             imageUrl,
                             publishedAt,
-                            "NEUTRAL" // Sentiment is computed later by the intelligence service
+                            "NEUTRAL" // Sentiment is added after the provider results are combined
                     );
                     articles.add(article);
                 }

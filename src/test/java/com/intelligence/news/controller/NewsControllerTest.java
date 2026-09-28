@@ -10,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -33,7 +32,6 @@ class NewsControllerTest {
                 "technology",
                 "all",
                 0,
-                Map.of("POSITIVE", 0, "NEUTRAL", 0, "NEGATIVE", 0),
                 Collections.emptyList(),
                 Collections.emptyList()
         );

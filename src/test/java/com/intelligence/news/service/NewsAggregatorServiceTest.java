@@ -45,7 +45,30 @@ class NewsAggregatorServiceTest {
         assertEquals(2, response.getTotalResults());
         assertEquals("POSITIVE", response.getArticles().get(0).getSentiment());
         assertEquals("NEGATIVE", response.getArticles().get(1).getSentiment());
-        assertEquals(1, response.getSentimentBreakdown().get("POSITIVE"));
-        assertEquals(1, response.getSentimentBreakdown().get("NEGATIVE"));
+    }
+
+    @Test
+    @DisplayName("Keeps results when one provider is unavailable")
+    void testAggregatorReturnsResultsFromAvailableClient() {
+        when(mockClientA.getProviderName()).thenReturn("Unavailable provider");
+        when(mockClientB.getProviderName()).thenReturn("Available provider");
+
+        Article article = new Article(
+                "1", "Company reports growth", "", "Available provider", "Staff",
+                "https://example.com/story", "", "2026-09-25", "NEUTRAL"
+        );
+
+        when(mockClientA.searchArticles(anyString(), anyString()))
+                .thenThrow(new RuntimeException("Service unavailable"));
+        when(mockClientB.searchArticles(anyString(), anyString())).thenReturn(List.of(article));
+
+        NewsAggregatorService aggregator = new NewsAggregatorService(
+                List.of(mockClientA, mockClientB), new SentimentAnalysisService()
+        );
+
+        NewsSearchResponse response = aggregator.search("company", "all");
+
+        assertEquals(1, response.getTotalResults());
+        assertEquals("Available provider", response.getArticles().get(0).getSource());
     }
 }

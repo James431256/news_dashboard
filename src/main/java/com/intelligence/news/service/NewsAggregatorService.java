@@ -63,16 +63,10 @@ public class NewsAggregatorService {
                 .flatMap(future -> future.join().stream())
                 .collect(Collectors.toList());
 
-        // Apply Sentiment Analysis to each article and build breakdown
-        Map<String, Integer> sentimentCounts = new HashMap<>();
-        sentimentCounts.put("POSITIVE", 0);
-        sentimentCounts.put("NEUTRAL", 0);
-        sentimentCounts.put("NEGATIVE", 0);
-
+        // Add a sentiment label to each article
         for (Article article : aggregatedArticles) {
             String sentiment = sentimentAnalysisService.analyzeSentiment(article.getTitle(), article.getDescription());
             article.setSentiment(sentiment);
-            sentimentCounts.put(sentiment, sentimentCounts.getOrDefault(sentiment, 0) + 1);
         }
 
         // List of providers actually involved
@@ -84,7 +78,6 @@ public class NewsAggregatorService {
                 sanitizedQuery,
                 sanitizedCategory,
                 aggregatedArticles.size(),
-                sentimentCounts,
                 providerNames,
                 aggregatedArticles
         );

@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * REST API Controller exposing news intelligence endpoints.
+ * REST API controller for news searches.
  */
 @RestController
 @RequestMapping("/api/news")

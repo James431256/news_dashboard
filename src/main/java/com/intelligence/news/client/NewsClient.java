@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Strategy interface for external news providers.
- * Any news service integration (The Guardian, GNews, etc.) must implement this contract.
+ * Each news provider must implement this contract.
  */
 public interface NewsClient {
 

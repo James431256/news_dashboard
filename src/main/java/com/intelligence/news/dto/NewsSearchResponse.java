@@ -3,7 +3,6 @@ package com.intelligence.news.dto;
 import com.intelligence.news.model.Article;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Data Transfer Object returned to the frontend.
@@ -14,7 +13,6 @@ public class NewsSearchResponse {
     private String query;
     private String category;
     private int totalResults;
-    private Map<String, Integer> sentimentBreakdown;
     private List<String> providers;
     private List<Article> articles;
 
@@ -22,12 +20,10 @@ public class NewsSearchResponse {
     }
 
     public NewsSearchResponse(String query, String category, int totalResults,
-                              Map<String, Integer> sentimentBreakdown,
                               List<String> providers, List<Article> articles) {
         this.query = query;
         this.category = category;
         this.totalResults = totalResults;
-        this.sentimentBreakdown = sentimentBreakdown;
         this.providers = providers;
         this.articles = articles;
     }
@@ -54,14 +50,6 @@ public class NewsSearchResponse {
 
     public void setTotalResults(int totalResults) {
         this.totalResults = totalResults;
-    }
-
-    public Map<String, Integer> getSentimentBreakdown() {
-        return sentimentBreakdown;
-    }
-
-    public void setSentimentBreakdown(Map<String, Integer> sentimentBreakdown) {
-        this.sentimentBreakdown = sentimentBreakdown;
     }
 
     public List<String> getProviders() {
